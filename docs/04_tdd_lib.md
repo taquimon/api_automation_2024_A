@@ -125,4 +125,5 @@ At its core, the test is ultimately the act and assert steps, with the arrange s
 > unittests: https://docs.python.org/3/library/unittest.html
 
 > nose2: https://docs.nose2.io/en/latest/
-> 
+
+> pytest: https://docs.pytest.org/en/8.0.x/ 
