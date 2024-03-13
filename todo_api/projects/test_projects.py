@@ -1,8 +1,9 @@
 import logging
 
-import requests
+import pytest
 
-from config.config import HEADERS_TODO, URL_TODO
+from config.config import URL_TODO
+from helpers.rest_client import RestClient
 from utils.logger import get_logger
 
 
@@ -15,16 +16,15 @@ class TestProjects:
         LOGGER.debug("SetupClass method")
         cls.url_projects = f"{URL_TODO}/projects"
         cls.list_projects = []
+        cls.rest_client = RestClient()
         # call method first token refresh_token if needed
         # call second method using token to generate access_token if needed
 
+    @pytest.mark.project
     def test_get_all_projects(self):
 
-        response = requests.get(url=self.url_projects, headers=HEADERS_TODO)
+        response = self.rest_client.request("get", url=self.url_projects)
 
-        LOGGER.info("Response from get all projects: %s", response.json())
-
-        LOGGER.info("Status Code: %s", response.status_code)
         assert response.status_code == 200, "wrong status code, expected 200"
 
     def test_create_project(self):
@@ -32,9 +32,8 @@ class TestProjects:
         body_project = {
             "name": "Buy Milk"
         }
-        response = requests.post(url=self.url_projects, headers=HEADERS_TODO, data=body_project)
-        LOGGER.info("Response from create project: %s", response.json())
-        LOGGER.info("Status Code: %s", response.status_code)
+        response = self.rest_client.request("post", url=self.url_projects, body=body_project)
+
         id_project_created = response.json()["id"]
         self.list_projects.append(id_project_created)
         assert response.status_code == 200, "wrong status code, expected 200"
@@ -44,9 +43,8 @@ class TestProjects:
         url_todo = f"{self.url_projects}/{id_project_delete}"
         LOGGER.debug("URL to delete: %s", url_todo)
 
-        response = requests.delete(url=url_todo, headers=HEADERS_TODO)
+        response = self.rest_client.request("delete",url=url_todo)
 
-        LOGGER.info("Status Code: %s", response.status_code)
         assert response.status_code == 204, "wrong status code, expected 204"
 
     def test_update_project(self, create_project):
@@ -56,9 +54,8 @@ class TestProjects:
         body_project = {
             "name": "Update project"
         }
-        response = requests.post(url=url_todo_update, headers=HEADERS_TODO, data=body_project)
-        LOGGER.info("Response from update project: %s", response.json())
-        LOGGER.info("Status Code: %s", response.status_code)
+        response = self.rest_client.request("post", url=url_todo_update, body=body_project)
+
         # add to list of projects to be deleted in cleanup
         self.list_projects.append(id_project_update)
         assert response.status_code == 200, "wrong status code, expected 200"
@@ -71,6 +68,6 @@ class TestProjects:
         LOGGER.info("Cleanup projects...")
         for id_project in cls.list_projects:
             url_delete_project = f"{URL_TODO}/projects/{id_project}"
-            response = requests.delete(url=url_delete_project, headers=HEADERS_TODO)
+            response = cls.rest_client.request("delete", url=url_delete_project)
             if response.status_code == 204:
                 LOGGER.info("Project Id: %s deleted", id_project)
