@@ -18,22 +18,21 @@ class TestSections:
         cls.list_sections = []
         cls.rest_client = RestClient()
 
-    def test_get_all_sections(self, create_project):
+    def test_get_all_sections(self, create_project, test_log_name):
         """
         Test get all sections
         """
-        project_id = create_project["id"]
-        url_get_all_sections = f"{URL_TODO}/sections?project_id={project_id}"
-        response = self.rest_client.request("get",url=url_get_all_sections)
+        url_get_all_sections = f"{URL_TODO}/sections?project_id={create_project}"
+        response = self.rest_client.request("get", url=url_get_all_sections)
 
         assert response.status_code == 200, "wrong status code, expected 200"
 
-    def test_create_section(self, get_project):
+    def test_create_section(self, create_project, test_log_name):
         """
         Test create section
         """
         body_section = {
-            "project_id": f"{get_project}",
+            "project_id": f"{create_project}",
             "name": "Section created with automation"
         }
 
@@ -43,7 +42,7 @@ class TestSections:
 
         assert response.status_code == 200, "wrong status code, expected 200"
 
-    def test_delete_section(self, create_section):
+    def test_delete_section(self, create_section, test_log_name):
         """
         Test delete section
         """
@@ -53,7 +52,7 @@ class TestSections:
 
         assert response.status_code == 204, "wrong status code, expected 204"
 
-    def test_update_section(self, create_section):
+    def test_update_section(self, create_section, test_log_name):
         """
         Test update section
         """
@@ -76,7 +75,7 @@ class TestSections:
         """
         LOGGER.info("Cleanup sections...")
         for id_section in cls.list_sections:
-            url_delete_section = f"{URL_TODO}/section/{id_section}"
+            url_delete_section = f"{URL_TODO}/sections/{id_section}"
             response = cls.rest_client.request("delete", url=url_delete_section)
             if response.status_code == 204:
                 LOGGER.info("Section Id: %s deleted", id_section)

@@ -21,13 +21,13 @@ class TestProjects:
         # call second method using token to generate access_token if needed
 
     @pytest.mark.project
-    def test_get_all_projects(self):
+    def test_get_all_projects(self, test_log_name):
 
         response = self.rest_client.request("get", url=self.url_projects)
 
         assert response.status_code == 200, "wrong status code, expected 200"
 
-    def test_create_project(self):
+    def test_create_project(self, test_log_name):
 
         body_project = {
             "name": "Buy Milk"
@@ -38,26 +38,26 @@ class TestProjects:
         self.list_projects.append(id_project_created)
         assert response.status_code == 200, "wrong status code, expected 200"
 
-    def test_delete_project(self, create_project):
-        id_project_delete = create_project["id"]
-        url_todo = f"{self.url_projects}/{id_project_delete}"
+    def test_delete_project(self, create_project, test_log_name):
+
+        url_todo = f"{self.url_projects}/{create_project}"
         LOGGER.debug("URL to delete: %s", url_todo)
 
         response = self.rest_client.request("delete",url=url_todo)
 
         assert response.status_code == 204, "wrong status code, expected 204"
 
-    def test_update_project(self, create_project):
-        id_project_update = create_project["id"]
-        LOGGER.debug("Project to update: %s", id_project_update)
-        url_todo_update = f"{self.url_projects}/{id_project_update}"
+    def test_update_project(self, create_project, test_log_name):
+
+        LOGGER.debug("Project to update: %s", create_project)
+        url_todo_update = f"{self.url_projects}/{create_project}"
         body_project = {
             "name": "Update project"
         }
         response = self.rest_client.request("post", url=url_todo_update, body=body_project)
 
         # add to list of projects to be deleted in cleanup
-        self.list_projects.append(id_project_update)
+        self.list_projects.append(create_project)
         assert response.status_code == 200, "wrong status code, expected 200"
 
     @classmethod
