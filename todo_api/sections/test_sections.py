@@ -25,7 +25,7 @@ class TestSections:
         url_get_all_sections = f"{URL_TODO}/sections?project_id={create_project}"
         response = self.rest_client.request("get", url=url_get_all_sections)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_create_section(self, create_project, test_log_name):
         """
@@ -37,45 +37,42 @@ class TestSections:
         }
 
         response = self.rest_client.request("post", url=self.url_sections, body=body_section)
-        id_section_created = response.json()["id"]
+        id_section_created = response["body"]["id"]
         self.list_sections.append(id_section_created)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_delete_section(self, create_section, test_log_name):
         """
         Test delete section
         """
-        id_project_delete = create_section["id"]
-        url_section_delete = f"{self.url_sections}/{id_project_delete}"
+        url_section_delete = f"{self.url_sections}/{create_section}"
         response = self.rest_client.request("delete", url=url_section_delete)
 
-        assert response.status_code == 204, "wrong status code, expected 204"
+        assert response["status_code"] == 204, "wrong status code, expected 204"
 
     def test_update_section(self, create_section, test_log_name):
         """
         Test update section
         """
-
-        id_section_update = create_section["id"]
-        LOGGER.debug("Section to update: %s", id_section_update)
-        url_todo_update = f"{self.url_sections}/{id_section_update}"
+        LOGGER.debug("Section to update: %s", create_section)
+        url_todo_update = f"{self.url_sections}/{create_section}"
         body_section_update = {
             "name": "Update section auto"
         }
         response = self.rest_client.request("post", url=url_todo_update, body=body_section_update)
-        self.list_sections.append(id_section_update)
+        # self.list_sections.append(create_section)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
-    @classmethod
-    def teardown_class(cls):
-        """
-        Delete all projects used in test
-        """
-        LOGGER.info("Cleanup sections...")
-        for id_section in cls.list_sections:
-            url_delete_section = f"{URL_TODO}/sections/{id_section}"
-            response = cls.rest_client.request("delete", url=url_delete_section)
-            if response.status_code == 204:
-                LOGGER.info("Section Id: %s deleted", id_section)
+    # @classmethod
+    # def teardown_class(cls):
+    #     """
+    #     Delete all projects used in test
+    #     """
+    #     LOGGER.info("Cleanup sections...")
+    #     for id_section in cls.list_sections:
+    #         url_delete_section = f"{URL_TODO}/sections/{id_section}"
+    #         response = cls.rest_client.request("delete", url=url_delete_section)
+    #         if response["status_code"] == 204:
+    #             LOGGER.info("Section Id: %s deleted", id_section)

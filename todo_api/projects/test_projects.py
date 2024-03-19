@@ -25,7 +25,7 @@ class TestProjects:
 
         response = self.rest_client.request("get", url=self.url_projects)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_create_project(self, test_log_name):
 
@@ -34,9 +34,9 @@ class TestProjects:
         }
         response = self.rest_client.request("post", url=self.url_projects, body=body_project)
 
-        id_project_created = response.json()["id"]
+        id_project_created = response["body"]["id"]
         self.list_projects.append(id_project_created)
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_delete_project(self, create_project, test_log_name):
 
@@ -45,7 +45,7 @@ class TestProjects:
 
         response = self.rest_client.request("delete",url=url_todo)
 
-        assert response.status_code == 204, "wrong status code, expected 204"
+        assert response["status_code"] == 204, "wrong status code, expected 204"
 
     def test_update_project(self, create_project, test_log_name):
 
@@ -58,7 +58,7 @@ class TestProjects:
 
         # add to list of projects to be deleted in cleanup
         self.list_projects.append(create_project)
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     @classmethod
     def teardown_class(cls):
@@ -69,5 +69,5 @@ class TestProjects:
         for id_project in cls.list_projects:
             url_delete_project = f"{URL_TODO}/projects/{id_project}"
             response = cls.rest_client.request("delete", url=url_delete_project)
-            if response.status_code == 204:
+            if response["status_code"] == 204:
                 LOGGER.info("Project Id: %s deleted", id_project)

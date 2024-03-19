@@ -23,7 +23,7 @@ class TestTasks:
         """
         response = self.rest_client.request("get", url=self.url_tasks)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_create_section(self, test_log_name):
         """
@@ -37,10 +37,10 @@ class TestTasks:
         }
 
         response = self.rest_client.request("post", url=self.url_tasks, body=content_task_body)
-        id_task_created = response.json()["id"]
+        id_task_created = response["body"]["id"]
         self.list_tasks.append(id_task_created)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
     #
 
     def test_delete_task(self, create_task, test_log_name):
@@ -50,7 +50,7 @@ class TestTasks:
         url_task_delete = f"{self.url_tasks}/{create_task}"
         response = self.rest_client.request("delete", url=url_task_delete)
 
-        assert response.status_code == 204, "wrong status code, expected 204"
+        assert response["status_code"] == 204, "wrong status code, expected 204"
 
     def test_close_task(self, create_task, test_log_name):
         """
@@ -59,7 +59,7 @@ class TestTasks:
         url_task_close = f"{self.url_tasks}/{create_task}/close"
         response = self.rest_client.request("post", url=url_task_close)
 
-        assert response.status_code == 204, "wrong status code, expected 204"
+        assert response["status_code"] == 204, "wrong status code, expected 204"
 
     def test_reopen_task(self, create_task, test_log_name):
         """
@@ -68,7 +68,7 @@ class TestTasks:
         url_task_reopen = f"{self.url_tasks}/{create_task}/reopen"
         response = self.rest_client.request("post", url=url_task_reopen)
 
-        assert response.status_code == 204, "wrong status code, expected 204"
+        assert response["status_code"] == 204, "wrong status code, expected 204"
 
     def test_update_task(self, create_task, test_log_name):
         """
@@ -82,7 +82,7 @@ class TestTasks:
         response = self.rest_client.request("post", url=url_task_update, body=body_task_update)
         # self.list_sections.append(id_section_update)
 
-        assert response.status_code == 200, "wrong status code, expected 200"
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     # @classmethod
     # def teardown_class(cls):
