@@ -11,6 +11,8 @@ import sys
 from datetime import datetime
 from logging import handlers
 
+from config.config import abs_path
+
 DEFAULT_LOG_LEVEL = logging.INFO
 
 DEFAULT_LOG_FORMAT = "%(asctime)s UTC %(levelname)-8s %(name)-15s  %(message)s"
@@ -36,7 +38,7 @@ def get_logger(name, level=DEFAULT_LOG_LEVEL, log_format=DEFAULT_LOG_FORMAT):
         logger.removeHandler(handler)
     handler = logging.StreamHandler(sys.__stdout__)
     handler.setLevel(level)
-    abs_path = os.path.abspath(__file__ + "../../../")
+    # abs_path = os.path.abspath(__file__ + "../../../")
     # if logs folder there is not exist it wil be created
     pathlib.Path(f"{abs_path}/logs").mkdir(parents=True, exist_ok=True)
     handler_file = handlers.RotatingFileHandler(f"{abs_path}/logs/{log_file_name}.log",

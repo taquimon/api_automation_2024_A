@@ -4,6 +4,7 @@ import pytest
 
 from config.config import URL_TODO
 from helpers.rest_client import RestClient
+from helpers.validate_response import ValidateResponse
 from utils.logger import get_logger
 
 
@@ -17,6 +18,7 @@ class TestProjects:
         cls.url_projects = f"{URL_TODO}/projects"
         cls.list_projects = []
         cls.rest_client = RestClient()
+        cls.validate = ValidateResponse()
         # call method first token refresh_token if needed
         # call second method using token to generate access_token if needed
 
@@ -24,8 +26,7 @@ class TestProjects:
     def test_get_all_projects(self, test_log_name):
 
         response = self.rest_client.request("get", url=self.url_projects)
-
-        assert response["status_code"] == 200, "wrong status code, expected 200"
+        self.validate.validate_response(response, "get_all_projects")
 
     def test_create_project(self, test_log_name):
 
@@ -36,7 +37,8 @@ class TestProjects:
 
         id_project_created = response["body"]["id"]
         self.list_projects.append(id_project_created)
-        assert response["status_code"] == 200, "wrong status code, expected 200"
+
+        self.validate.validate_response(response, "create_project")
 
     def test_delete_project(self, create_project, test_log_name):
 
@@ -45,7 +47,7 @@ class TestProjects:
 
         response = self.rest_client.request("delete",url=url_todo)
 
-        assert response["status_code"] == 204, "wrong status code, expected 204"
+        self.validate.validate_response(response, "delete_project")
 
     def test_update_project(self, create_project, test_log_name):
 
@@ -58,7 +60,7 @@ class TestProjects:
 
         # add to list of projects to be deleted in cleanup
         self.list_projects.append(create_project)
-        assert response["status_code"] == 200, "wrong status code, expected 200"
+        self.validate.validate_response(response, "update_project")
 
     @classmethod
     def teardown_class(cls):

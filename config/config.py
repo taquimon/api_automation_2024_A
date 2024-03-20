@@ -7,3 +7,4 @@ URL_TODO = "https://api.todoist.com/rest/v2"
 HEADERS_TODO = {
     "Authorization": f"Bearer {token_todo}"
 }
+abs_path = os.path.abspath(__file__ + "../../../")
