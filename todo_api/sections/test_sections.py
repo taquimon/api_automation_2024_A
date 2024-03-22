@@ -1,5 +1,7 @@
 import logging
 
+import allure
+import pytest
 import requests
 
 from config.config import HEADERS_TODO, URL_TODO
@@ -10,6 +12,8 @@ from utils.logger import get_logger
 LOGGER = get_logger(__name__, logging.DEBUG)
 
 
+@allure.epic("TODO API")
+@allure.story("Sections")
 class TestSections:
     @classmethod
     def setup_class(cls):
@@ -18,6 +22,13 @@ class TestSections:
         cls.list_sections = []
         cls.rest_client = RestClient()
 
+    @allure.feature("List Sections")
+    @allure.title("Test get all sections")
+    @allure.description("Test that show the response of list of all sections")
+    @allure.tag("acceptance", "sections", "sanity")
+    @allure.testcase("TC-1254")
+    @allure.issue("BUG-123")
+    @pytest.mark.acceptance
     def test_get_all_sections(self, create_project, test_log_name):
         """
         Test get all sections
@@ -27,6 +38,12 @@ class TestSections:
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
+    @allure.feature("Create Sections")
+    @allure.title("Test create section")
+    @allure.description("Test that show the response of create section")
+    @allure.tag("acceptance", "sections", "sanity")
+    @allure.testcase("http://testlink/TC-1254")
+    @pytest.mark.acceptance
     def test_create_section(self, create_project, test_log_name):
         """
         Test create section
@@ -42,6 +59,7 @@ class TestSections:
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
+    @pytest.mark.acceptance
     def test_delete_section(self, create_section, test_log_name):
         """
         Test delete section
@@ -51,6 +69,7 @@ class TestSections:
 
         assert response["status_code"] == 204, "wrong status code, expected 204"
 
+    @pytest.mark.acceptance
     def test_update_section(self, create_section, test_log_name):
         """
         Test update section
