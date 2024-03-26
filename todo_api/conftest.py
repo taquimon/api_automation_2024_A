@@ -1,9 +1,11 @@
 import logging
 
 import pytest
-import requests
 
-from config.config import URL_TODO, HEADERS_TODO
+from config.config import URL_TODO
+from entities.project import Project
+from entities.section import Section
+from entities.task import Task
 from helpers.rest_client import RestClient
 from utils.logger import get_logger
 
@@ -12,52 +14,33 @@ LOGGER = get_logger(__name__, logging.DEBUG)
 
 @pytest.fixture()
 def create_project(request):
-
     LOGGER.debug("Create project fixture")
-    environment = request.config.getoption("--env")
-    LOGGER.critical("Environment selected: %s", environment)
-    body_project = {
-        "name": "Project from fixture"
-    }
-    url_project = URL_TODO+"/projects"
-    rest_client = RestClient()
-    response = rest_client.request("post", url_project, body=body_project)
-    project_id = response["body"]["id"]
+    project = Project()
+    project_created, rest_client = project.create_project()
+    project_id = project_created["body"]["id"]
 
     yield project_id
-    delete_project(project_id, rest_client)
+    delete_project(project_id, project)
 
 
 @pytest.fixture()
 def create_section(create_project):
 
     LOGGER.debug("Create section fixture")
-
-    body_section = {
-        "project_id": f"{create_project}",
-        "name": "Section from fixture"
-    }
-    url_section = URL_TODO+"/sections"
-    rest_client = RestClient()
-    response = rest_client.request("post", url_section, body=body_section)
-    id_section_created = response["body"]["id"]
+    section = Section()
+    section_created, _ = section.create_section(create_project)
+    id_section_created = section_created["body"]["id"]
     yield id_section_created
 
 
 @pytest.fixture()
 def create_task():
-    content_task_body = {
-        "content": "Task created from fixture",
-        "due_string": "tomorrow at 12:00",
-        "due_lang": "en",
-        "priority": 4
-    }
-    url_tasks = URL_TODO + "/tasks"
-    rest_client = RestClient()
-    response = rest_client.request("post", url=url_tasks, body=content_task_body)
-    id_task_created = response["body"]["id"]
+
+    task = Task()
+    task_created, _ = task.create_tasks()
+    id_task_created = task_created["body"]["id"]
     yield id_task_created
-    delete_task(id_task_created, rest_client)
+    delete_task(id_task_created, task)
 
 
 @pytest.fixture()
@@ -79,12 +62,8 @@ def test_log_name(request):
     request.addfinalizer(fin)
 
 
-def delete_project(project_id, rest_client):
-    LOGGER.info("Cleanup project...")
-    url_delete_project = f"{URL_TODO}/projects/{project_id}"
-    response = rest_client.request("delete", url=url_delete_project)
-    if response["status_code"] == 204:
-        LOGGER.info("Project Id: %s deleted", project_id)
+def delete_project(project_id, project):
+    project.delete_project(project_id)
 
 
 @pytest.fixture()
@@ -101,12 +80,8 @@ def create_comment(create_task):
     delete_comment(id_comment_created, rest_client)
 
 
-def delete_task(task_id, rest_client):
-    LOGGER.info("Cleanup task...")
-    url_delete_task = f"{URL_TODO}/tasks/{task_id}"
-    response = rest_client.request("delete", url=url_delete_task)
-    if response["status_code"] == 204:
-        LOGGER.info("Comment Id: %s deleted", task_id)
+def delete_task(task_id, task):
+    task.delete_task(task_id)
 
 
 def delete_comment(comment_id, rest_client):

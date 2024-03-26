@@ -27,8 +27,8 @@ class RestClient:
         response_dict = {}
         try:
             response = self.select_method(method_name, self.session)(url=url, data=body)
-            LOGGER.debug("Status Code %s: ", response.status_code)
-            LOGGER.debug("Response Content %s: ", response.text)
+            LOGGER.debug("Status Code: %s", response.status_code)
+            LOGGER.debug("Response Content: %s", response.text)
             response.raise_for_status()
             if hasattr(response, "request"):
                 LOGGER.info("Response headers: %s", response.headers)
@@ -39,7 +39,10 @@ class RestClient:
             LOGGER.error("Request error: %s", request_error)
         finally:
             if response.text:
-                response_dict["body"] = json.loads(response.text)
+                if response.ok:
+                    response_dict["body"] = json.loads(response.text)
+                else:
+                    response_dict["body"] = {"msg": response.text}
             else:
                 # case delete
                 response_dict["body"] = {"msg": "No body content"}

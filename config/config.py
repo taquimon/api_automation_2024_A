@@ -10,3 +10,5 @@ HEADERS_TODO = {
     "Authorization": f"Bearer {token_todo}"
 }
 abs_path = os.path.abspath(__file__ + "../../../")
+
+MAX_PROJECTS = 8

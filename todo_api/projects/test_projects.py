@@ -2,7 +2,8 @@ import logging
 
 import pytest
 
-from config.config import URL_TODO
+from config.config import URL_TODO, MAX_PROJECTS
+from entities.project import Project
 from helpers.rest_client import RestClient
 from helpers.validate_response import ValidateResponse
 from utils.logger import get_logger
@@ -19,17 +20,22 @@ class TestProjects:
         cls.list_projects = []
         cls.rest_client = RestClient()
         cls.validate = ValidateResponse()
-        # call method first token refresh_token if needed
-        # call second method using token to generate access_token if needed
 
     @pytest.mark.project
     def test_get_all_projects(self, test_log_name):
+        """
+        Test get all projects
+        :param test_log_name:   fixture to log the Start and Complete test logs
+        """
 
         response = self.rest_client.request("get", url=self.url_projects)
         self.validate.validate_response(response, "get_all_projects")
 
     def test_create_project(self, test_log_name):
+        """
 
+        :param test_log_name:   fixture to log the Start and Complete test logs
+        """
         body_project = {
             "name": "Buy Milk"
         }
@@ -61,6 +67,28 @@ class TestProjects:
         # add to list of projects to be deleted in cleanup
         self.list_projects.append(create_project)
         self.validate.validate_response(response, "update_project")
+
+    @pytest.mark.functional
+    def test_max_number_of_projects(self, test_log_name):
+        """
+        Test max number of projects can be created, an error should be returned
+        :param test_log_name:
+        """
+        response = self.rest_client.request("get", url=self.url_projects)
+        number_of_projects = len(response["body"])
+        LOGGER.debug("Number of current projects: %s", number_of_projects)
+        project = Project()
+        for index in range(number_of_projects, MAX_PROJECTS):
+            body_project = {
+                "name": f"Project {index}"
+            }
+            project_created, _ = project.create_project(body=body_project)
+            project_id = project_created["body"]["id"]
+            self.list_projects.append(project_id)
+
+        response, _ = project.create_project()
+
+        assert response["status_code"] == 403
 
     @classmethod
     def teardown_class(cls):

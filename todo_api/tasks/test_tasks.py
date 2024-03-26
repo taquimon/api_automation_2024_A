@@ -1,7 +1,10 @@
 import json
 import logging
 
+import pytest
+
 from config.config import URL_TODO
+from entities.task import Task
 from helpers.rest_client import RestClient
 from utils.logger import get_logger
 
@@ -16,6 +19,7 @@ class TestTasks:
         cls.url_tasks = f"{URL_TODO}/tasks"
         cls.list_tasks = []
         cls.rest_client = RestClient()
+        cls.task = Task()
 
     def test_get_all_tasks(self, test_log_name):
         """
@@ -25,7 +29,8 @@ class TestTasks:
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
-    def test_create_section(self, test_log_name):
+    @pytest.mark.acceptance
+    def test_create_task(self, test_log_name):
         """
         Test create section
         """
@@ -41,7 +46,45 @@ class TestTasks:
         self.list_tasks.append(id_task_created)
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
-    #
+
+    @pytest.mark.functional
+    def test_create_task_by_project(self, create_project, test_log_name):
+        """
+        Create a task inside a project
+        :param create_project:
+        :param test_log_name:
+        :return:
+        """
+        response, _ = self.task.create_tasks(project_id=create_project)
+        id_task_created = response["body"]["id"]
+        self.list_tasks.append(id_task_created)
+        assert response["status_code"] == 200, "wrong status code, expected 200"
+
+    @pytest.mark.functional
+    def test_create_task_by_section(self, create_section, test_log_name):
+        """
+        Create a task inside a section
+        :param create_section:
+        :param test_log_name:
+        :return:
+        """
+        response, _ = self.task.create_tasks(section_id=create_section)
+        id_task_created = response["body"]["id"]
+        self.list_tasks.append(id_task_created)
+        assert response["status_code"] == 200, "wrong status code, expected 200"
+
+    @pytest.mark.functional
+    def test_create_task_by_project_and_section(self, create_project, create_section, test_log_name):
+        """
+        Create a task inside a project and section
+        :param create_section:
+        :param test_log_name:
+        :return:
+        """
+        response, _ = self.task.create_tasks(project_id=create_project, section_id=create_section)
+        id_task_created = response["body"]["id"]
+        self.list_tasks.append(id_task_created)
+        assert response["status_code"] == 200, "wrong status code, expected 200"
 
     def test_delete_task(self, create_task, test_log_name):
         """
@@ -84,14 +127,14 @@ class TestTasks:
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
-    # @classmethod
-    # def teardown_class(cls):
-    #     """
-    #     Delete all projects used in test
-    #     """
-    #     LOGGER.info("Cleanup sections...")
-    #     for id_section in cls.list_sections:
-    #         url_delete_section = f"{URL_TODO}/sections/{id_section}"
-    #         response = cls.rest_client.request("delete", url=url_delete_section)
-    #         if response.status_code == 204:
-    #             LOGGER.info("Section Id: %s deleted", id_section)
+    @classmethod
+    def teardown_class(cls):
+        """
+        Delete all tasks used in test
+        """
+        LOGGER.info("Cleanup tasks...")
+        for id_task in cls.list_tasks:
+            url_delete_task = f"{URL_TODO}/tasks/{id_task}"
+            response = cls.rest_client.request("delete", url=url_delete_task)
+            if response["status_code"] == 204:
+                LOGGER.info("Task Id: %s deleted", id_task)

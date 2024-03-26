@@ -1,9 +1,7 @@
-import json
 import logging
 
-import requests
 
-from config.config import HEADERS_TODO, URL_TODO
+from config.config import URL_TODO
 from helpers.rest_client import RestClient
 from utils.logger import get_logger
 
