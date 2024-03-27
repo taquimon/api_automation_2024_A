@@ -11,3 +11,4 @@ pymsteams~=0.2.2
 fastapi~=0.110.0
 passlib~=1.7.4
 pydantic~=2.6.4
+behave==1.2.6
