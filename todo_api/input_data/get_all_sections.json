@@ -1,0 +1,14 @@
+{
+    "request": {
+      "method": "GET",
+      "url": "/sections"
+    },
+    "response": {
+        "body": [
+        ]
+    },
+    "headers": {
+      "Content-type": "application/json"
+    },
+    "status_code": 200
+}

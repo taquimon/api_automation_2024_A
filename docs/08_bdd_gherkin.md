@@ -183,6 +183,42 @@ Feature: Restaurant
       |    20 |   5 |   15 |
 ```
 
+## Reports
+
+> package install
+```shell
+pip install allure-behave
+```
+
+### Execution
+ 
+- Configure behave.ini file
+```ini
+[behave]
+format=allure_behave.formatter:AllureFormatter
+outfiles=allure-results
+```
+
+- Run with command
+```shell
+behave -f allure_behave.formatter:AllureFormatter -o {allure_report_folder} {path_to_feature_file}
+```
+## Metadata 
+
+### Gherkin tags example
+```gherkin
+    @critical
+    @allure.label.owner:ET
+    @allure.link:https://dev.example.com/
+    @allure.issue:API-123
+    Scenario: Verify all projects are returned when get all projects endpoint is call
+      As a user I want to get all the projects from TODOIST API
+
+      When I call to projects endpoint using "GET" method  and without body
+      Then I receive the response and validate using "get_all_projects" json
+      Then I validate the status code is 200
+```
+
 ### References
 
 https://www.lambdatest.com/blog/selenium-python-behave-tutorial-bdd/
@@ -190,3 +226,5 @@ https://www.lambdatest.com/blog/selenium-python-behave-tutorial-bdd/
 https://automationpanda.com/2019/04/02/python-bdd-framework-comparison/
 
 https://behave.readthedocs.io/en/latest/
+
+https://allurereport.org/docs/gettingstarted-readability/#description-links-and-other-metadata

@@ -24,9 +24,11 @@ class RestClient:
         :param body:            body to use in request
         :return:
         """
+
         response_dict = {}
+        response = None
         try:
-            response = self.select_method(method_name, self.session)(url=url, data=body)
+            response = self.select_method(method_name.lower(), self.session)(url=url, data=body)
             LOGGER.debug("Status Code: %s", response.status_code)
             LOGGER.debug("Response Content: %s", response.text)
             response.raise_for_status()
