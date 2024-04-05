@@ -2,6 +2,7 @@ import logging
 
 from config.config import URL_TODO
 from entities.project import Project
+from entities.section import Section
 from helpers.rest_client import RestClient
 from helpers.validate_response import ValidateResponse
 from utils.logger import get_logger
@@ -15,10 +16,11 @@ def before_all(context):
     context.rest_client = RestClient()
     context.validate = ValidateResponse()
     context.project = Project()
+    context.section = Section()
     context.resource_list = {
-        "projects": [],
-        "sections": [],
         "tasks": [],
+        "sections": [],
+        "projects": [],
     }
 
 
@@ -34,11 +36,17 @@ def before_scenario(context, scenario):
     if "project_id" in scenario.tags:
         project, _ = context.project.create_project()
         context.project_id = project["body"]["id"]
+        # add to project list to be deleted at the end of execution
+        context.resource_list["projects"].append(context.project_id)
         LOGGER.debug("Project created in before scenario: %s", context.project_id)
 
     if "section_id" in scenario.tags:
-        section, _ = context.section.create_section()
+        project, _ = context.project.create_project()
+        LOGGER.debug("project for section %s", project["body"]["id"])
+        section, _ = context.section.create_section(project_id=project["body"]["id"])
         context.section_id = section["body"]["id"]
+        context.resource_list["projects"].append(project["body"]["id"])
+        context.resource_list["sections"].append(context.section_id)
         LOGGER.debug("Section created in before scenario: %s", context.section_id)
 
 

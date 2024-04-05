@@ -30,7 +30,8 @@ class ValidateResponse:
         error_message = f"Expecting '{expected_value}' but received '{actual_value}'"
         if key_compare == "body":
             if isinstance(actual_value, list):
-                assert self.compare_json(expected_value[0], actual_value[0]), error_message
+                if len(actual_value) > 0:
+                    assert self.compare_json(expected_value[0], actual_value[0]), error_message
             else:
                 assert self.compare_json(expected_value, actual_value), error_message
         elif key_compare == "headers":

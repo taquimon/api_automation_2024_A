@@ -22,6 +22,7 @@ class Section:
             "name": "Section from fixture"
         }
         response = self.rest_client.request("post", url=self.url_sections, body=body_section)
+        LOGGER.debug("Section created using entity %s", response["body"])
 
         return response, self.rest_client
 

@@ -1,6 +1,7 @@
+import json
 import logging
 
-from behave import given, when, then
+from behave import given, when, then, step
 
 from config.config import URL_TODO
 from utils.logger import get_logger
@@ -8,14 +9,20 @@ from utils.logger import get_logger
 LOGGER = get_logger(__name__, logging.DEBUG)
 
 
-@when(u'I call to {endpoint} endpoint using "{method_name}" method  and without body')
-def call_endpoint(context, method_name, endpoint):
+@when(u'I call to {endpoint} endpoint using "{method_name}" method  and {param} body')
+def call_endpoint(context, endpoint, method_name, param):
     url_feature = f"{URL_TODO}/{endpoint}"
     LOGGER.debug("URL: %s", url_feature)
     body_feature = None
 
     if method_name == "POST":
-        body_feature, new_feature_url = get_data_by_feature(endpoint, context)
+        if context.text:
+            LOGGER.debug("JSON param: %s", context.text)
+            body_feature = update_data_json(context, json.loads(context.text))
+        else:
+            body_feature, new_feature_url = get_data_by_feature(endpoint, context)
+            # TODO: update feature file to only have 1
+            url_feature = new_feature_url
         LOGGER.debug("Body: %s", body_feature)
     elif method_name == "DELETE":
         _, new_feature_url = get_data_by_feature(endpoint, context)
@@ -36,7 +43,7 @@ def receive_response(context, json_file):
     LOGGER.debug(u'STEP: Then I receive the response')
 
 
-@then(u'I validate the status code is {status_code:d}')
+@step(u'I validate the status code is {status_code:d}')
 def validate_status_code(context, status_code):
     assert status_code == context.response["status_code"], f"expected {status_code} but received {context.response["status_code"]}"
     LOGGER.debug("STEP: Then I valida the status code is %s", status_code)
@@ -61,3 +68,14 @@ def get_data_by_feature(feature, context):
     LOGGER.debug("New URL feature: %s", url)
     LOGGER.debug("Body data by feature: %s", body)
     return body, url
+
+
+def update_data_json(context, data):
+    keys = ["project_id", "section_id", "task_id"]
+    for k in keys:
+        for d in data.keys():
+            if k == d and hasattr(context, k):
+                data[d] = getattr(context, k)  # "project_id" = context.project_id
+                LOGGER.debug("Key changed: %s ", d)
+    LOGGER.debug("New JSON data: %s", data)
+    return data

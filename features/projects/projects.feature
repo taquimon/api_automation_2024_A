@@ -24,7 +24,7 @@
       Then I receive the response and validate using "create_project" json
       And I validate the status code is 200
 
-    @project_id @acceptance @wip
+    @project_id @acceptance
     Scenario: Verify that a project can be deleted using delete project endpoint
       As a user I want to create a projects from TODOIST API
 
