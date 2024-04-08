@@ -1,5 +1,12 @@
+"""
+(c) Copyright Jalasoft. 2024
+
+test_comments.py
+    file that contains pytest tests for sections endpoint
+"""
 import logging
 
+import allure
 
 from config.config import URL_TODO
 from helpers.rest_client import RestClient
@@ -9,29 +16,37 @@ from utils.logger import get_logger
 LOGGER = get_logger(__name__, logging.DEBUG)
 
 
+@allure.epic("TODO API")
+@allure.story("Comments")
 class TestComments:
+    """
+    Class for test comments endpoint
+    """
     @classmethod
     def setup_class(cls):
+        """
+        Setup Class to initialize variables or objects
+        """
         LOGGER.debug("Setup Class method")
         cls.url_comments = f"{URL_TODO}/comments"
         # cls.list_sections = []
         cls.rest_client = RestClient()
 
-    def test_get_all_comments(self, create_task, test_log_name):
+    def test_get_all_comments(self, create_task, _test_log_name):
         """
         Test get all comments
-        :param test_log_name:
+        :param _test_log_name:
         """
-        url_get_all_comments = f"{URL_TODO}/sections?task_id={create_task}"
+        url_get_all_comments = f"{URL_TODO}/comments?task_id={create_task}"
         response = self.rest_client.request("get", url=url_get_all_comments)
 
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
-    def test_create_comment(self, create_task, test_log_name):
+    def test_create_comment(self, create_task, _test_log_name):
         """
 
         :param create_task:
-        :param test_log_name:
+        :param _test_log_name:
         :return:
         """
         body_comment = {
@@ -43,7 +58,7 @@ class TestComments:
         # self.list_sections.append(id_section_created)
         assert response["status_code"] == 200, "wrong status code, expected 200"
 
-    def test_delete_comment(self, create_comment, test_log_name):
+    def test_delete_comment(self, create_comment, _test_log_name):
         """
         Test delete comment
         """
@@ -52,7 +67,7 @@ class TestComments:
 
         assert response["status_code"] == 204, "wrong status code, expected 204"
 
-    def test_update_comment(self, create_comment, test_log_name):
+    def test_update_comment(self, create_comment, _test_log_name):
         """
         Test update comment
         """
@@ -62,7 +77,9 @@ class TestComments:
         body_comment_update = {
             "content": "Update comment auto"
         }
-        response = self.rest_client.request("post", url=url_comment_update, body=body_comment_update)
+        response = self.rest_client.request("post",
+                                            url=url_comment_update,
+                                            body=body_comment_update)
         # self.list_sections.append(id_section_update)
 
         assert response["status_code"] == 200, "wrong status code, expected 200"

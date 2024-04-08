@@ -1,0 +1,22 @@
+|              filepath              |              function              | passed | error | SUBTOTAL |
+| ---------------------------------- | ---------------------------------- | -----: | ----: | -------: |
+| todo_api/comments/test_comments.py | TestComments.test_get_all_comments |      1 |     0 |        1 |
+| todo_api/comments/test_comments.py | TestComments.test_create_comment   |      1 |     0 |        1 |
+| todo_api/comments/test_comments.py | TestComments.test_delete_comment   |      1 |     0 |        1 |
+| todo_api/comments/test_comments.py | TestComments.test_update_comment   |      1 |     0 |        1 |
+| todo_api/projects/test_projects.py | TestProjects.test_get_all_projects |      1 |     0 |        1 |
+| todo_api/projects/test_projects.py | TestProjects.test_create_project   |      1 |     0 |        1 |
+| todo_api/projects/test_projects.py | TestProjects.test_delete_project   |      1 |     0 |        1 |
+| todo_api/projects/test_projects.py | TestProjects.test_update_project   |      1 |     0 |        1 |
+| todo_api/sections/test_sections.py | TestSections.test_get_all_sections |      1 |     0 |        1 |
+| todo_api/sections/test_sections.py | TestSections.test_create_section   |      1 |     0 |        1 |
+| todo_api/sections/test_sections.py | TestSections.test_delete_section   |      1 |     0 |        1 |
+| todo_api/sections/test_sections.py | TestSections.test_update_section   |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_get_all_tasks       |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_create_section      |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_delete_task         |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_close_task          |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_reopen_task         |      1 |     0 |        1 |
+| todo_api/tasks/test_tasks.py       | TestTasks.test_update_task         |      1 |     0 |        1 |
+| todo_api/test_fastapi.py           | TestFastAPI.test_get_users         |      0 |     1 |        1 |
+| TOTAL                              |                                    |     18 |     1 |       19 |

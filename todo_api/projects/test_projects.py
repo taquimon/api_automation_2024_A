@@ -1,5 +1,12 @@
+"""
+(c) Copyright Jalasoft. 2024
+
+test_projects.py
+    file that contains pytest tests for projects endpoint
+"""
 import logging
 
+import allure
 import pytest
 
 from config.config import URL_TODO, MAX_PROJECTS
@@ -12,9 +19,17 @@ from utils.logger import get_logger
 LOGGER = get_logger(__name__, logging.DEBUG)
 
 
+@allure.epic("TODO API")
+@allure.story("Projects")
 class TestProjects:
+    """
+    Class for Test projects endpoint
+    """
     @classmethod
     def setup_class(cls):
+        """
+        Setup Class to initialize variables or objects
+        """
         LOGGER.debug("SetupClass method")
         cls.url_projects = f"{URL_TODO}/projects"
         cls.list_projects = []
@@ -22,19 +37,19 @@ class TestProjects:
         cls.validate = ValidateResponse()
 
     @pytest.mark.project
-    def test_get_all_projects(self, test_log_name):
+    def test_get_all_projects(self, _test_log_name):
         """
         Test get all projects
-        :param test_log_name:   fixture to log the Start and Complete test logs
+        :param _test_log_name:   fixture to log the Start and Complete test logs
         """
 
         response = self.rest_client.request("get", url=self.url_projects)
         self.validate.validate_response(response, "get_all_projects")
 
-    def test_create_project(self, test_log_name):
+    def test_create_project(self, _test_log_name):
         """
 
-        :param test_log_name:   fixture to log the Start and Complete test logs
+        :param _test_log_name:   fixture to log the Start and Complete test logs
         """
         body_project = {
             "name": "Buy Milk"
@@ -46,7 +61,12 @@ class TestProjects:
 
         self.validate.validate_response(response, "create_project")
 
-    def test_delete_project(self, create_project, test_log_name):
+    def test_delete_project(self, create_project, _test_log_name):
+        """
+        Test to =verify if a project is deleted
+        :param create_project:
+        :param _test_log_name:
+        """
 
         url_todo = f"{self.url_projects}/{create_project}"
         LOGGER.debug("URL to delete: %s", url_todo)
@@ -55,7 +75,12 @@ class TestProjects:
 
         self.validate.validate_response(response, "delete_project")
 
-    def test_update_project(self, create_project, test_log_name):
+    def test_update_project(self, create_project, _test_log_name):
+        """
+        Test to update the project
+        :param create_project:
+        :param _test_log_name:
+        """
 
         LOGGER.debug("Project to update: %s", create_project)
         url_todo_update = f"{self.url_projects}/{create_project}"
@@ -69,10 +94,10 @@ class TestProjects:
         self.validate.validate_response(response, "update_project")
 
     @pytest.mark.functional
-    def test_max_number_of_projects(self, test_log_name):
+    def test_max_number_of_projects(self, _test_log_name):
         """
         Test max number of projects can be created, an error should be returned
-        :param test_log_name:
+        :param _test_log_name:
         """
         response = self.rest_client.request("get", url=self.url_projects)
         number_of_projects = len(response["body"])
