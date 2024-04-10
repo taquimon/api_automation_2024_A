@@ -1,4 +1,0 @@
-body_section = {
-  "project_id": "project_id",
-  "name": "Second Section created"
-}

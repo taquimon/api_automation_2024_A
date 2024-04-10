@@ -23,7 +23,8 @@ python3.11 -V
 python3.11 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
-python3.11 -m behave -f allure_behave.formatter:AllureFormatter -o allure-results
+python3.11 -m pytest todo_api/ -v -s --alluredir reports/allure/allure-results
+
 ```
 
 ```json
