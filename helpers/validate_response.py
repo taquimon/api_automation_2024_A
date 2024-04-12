@@ -9,11 +9,15 @@ LOGGER = get_logger(__name__, logging.DEBUG)
 
 class ValidateResponse:
 
-    def validate_response(self, actual_response=None, endpoint=None):
+    def validate_response(self, actual_response=None, endpoint=None, stub=False):
 
         expected_response = self.read_input_data_json(f"{abs_path}/todo_api/input_data/{endpoint}.json")
 
-        if "body" in actual_response:
+        if stub:
+            self.validate_value(expected_response["response"]["status"], actual_response["body"]["response"]["status"], "status_code")
+            self.validate_value(expected_response["response"]["jsonBody"], actual_response["body"]["response"]["jsonBody"], "body")
+            self.validate_value(expected_response["response"]["headers"],  actual_response["body"]["response"]["headers"], "headers")
+        else:
             self.validate_value(expected_response["status_code"], actual_response["status_code"], "status_code")
             self.validate_value(expected_response["response"]["body"], actual_response["body"], "body")
             self.validate_value(expected_response["headers"],  actual_response["headers"], "headers")

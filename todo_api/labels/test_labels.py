@@ -31,16 +31,37 @@ class TestProjects:
         Setup Class to initialize variables or objects
         """
         LOGGER.debug("SetupClass method")
-        cls.url_projects = f"{URL_TODO}/labels"
+        cls.url_labels = f"{URL_TODO}/labels"
         cls.list_projects = []
-        cls.rest_client = RestClient()
+        cls.rest_client = RestClient(headers={})
         cls.validate = ValidateResponse()
         cls.wiremock = WiremockStub()
 
+    @allure.tag("acceptance", "label", "stub")
     def test_get_label(self, _test_log_name):
         """
-        :return:
+        Test get Label using stubs
         """
-        # wiremock request
-        self.wiremock.create_stub("get_label_stub")
-        # self.wiremock.test("get_label")
+        # wiremock request to create GET label endpoint
+        wiremock, response_stub = self.wiremock.create_stub("get_label_stub")
+        # get ID of stub label created
+        label_id_stub = response_stub["body"]["id"]
+        url_mappings_label = f"http://localhost:{wiremock.port}/__admin/mappings/{label_id_stub}"
+        LOGGER.debug("URL label mapping: %s", url_mappings_label)
+
+        response = self.rest_client.request("get", url=url_mappings_label)
+        LOGGER.debug("Response get label: %s", response)
+        self.validate.validate_response(response, "get_label_stub", stub=True)
+
+    def test_create_label(self, _test_log_name):
+        """
+        Test create Label using stubs
+        """
+        wiremock, response_stub = self.wiremock.create_stub("create_label_stub")
+        # get ID of stub label created
+        label_id_stub = response_stub["body"]["id"]
+        url_mappings_label = f"http://localhost:{wiremock.port}/__admin/mappings/{label_id_stub}"
+        LOGGER.debug("URL label mapping: %s", url_mappings_label)
+        response = self.rest_client.request("get", url=url_mappings_label)
+        LOGGER.debug("Response get label: %s", response)
+        self.validate.validate_response(response, "create_label_stub", stub=True)

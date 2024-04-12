@@ -8,6 +8,10 @@ LABEL maintainer="edwin.taquichiri@jalasoft.com"
 COPY . /opt/app
 WORKDIR /opt/app
 
+# RUN apt-get install -y git
+# check credentials
+# RUN git clone repo (ssh)
+
 # update system
 RUN apt-get update
 
@@ -33,5 +37,5 @@ RUN . env/bin/activate
 
 # install requirements
 RUN python3 -m pip install -r requirements.txt
-
+RUN python3 -m pylint todo_api/ --rcfile=.pylintrc
 RUN python3 -m pytest todo_api/ -v -s --alluredir reports/allure/allure-results

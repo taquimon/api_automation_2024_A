@@ -1,0 +1,19 @@
+{
+  "request": {
+    "url": "/labels",
+    "method": "POST"
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": "2156154810",
+      "name": "Food",
+      "color": "charcoal",
+      "order": 1,
+      "is_favorite": false
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
